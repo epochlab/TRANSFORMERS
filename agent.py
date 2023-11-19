@@ -1,5 +1,38 @@
-# State - Embeddings (Vector DB)
-# Execution - Environment step (Knowledge base call)
-# Context - Search, atomisation and create new task
-# Prioritization - Index and branching
 
+import torch, faiss, chromadb
+from transformers import AutoTokenizer, AutoModel
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# print(device)
+
+class vectorDB():
+    def __init__(self):
+        self.client = chromadb.Client()
+        self.memory = self.client.create_collection(name="vecdb")
+        self.tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
+        self.model = AutoModel.from_pretrained("bert-base-uncased").to(device)
+
+    def _embed(self, x):
+            tokens = self.tokenizer(x, return_tensors="pt").to(device)
+            with torch.no_grad():
+                embedding = self.model(**tokens).last_hidden_state # [batch_size, sequence_length, hidden_size]
+            return embedding.mean(dim=1) # Aggregate across sequence
+
+    def _add(self, data, embedding):
+        self.memory.add(
+            embeddings=[embedding[0].tolist()],
+            documents=[data],
+            ids=[str(0)]
+        )
+
+db = vectorDB()
+
+en1 = "Prometheus stole fire from the gods and gave it to man."
+db._add(en1, db._embed(en1).cpu())
+
+print(db.memory.get(include=['embeddings', 'documents']))
+
+# d = embedding.shape[1]
+# index = faiss.IndexFlatL2(d)
+# index.add(embedding.numpy())
+# print(index.reconstruct[1])
