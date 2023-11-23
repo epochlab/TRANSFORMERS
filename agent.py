@@ -3,7 +3,7 @@ import torch, faiss, chromadb
 from transformers import AutoTokenizer, AutoModel
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-# print(device)
+print(device)
 
 class vectorDB():
     def __init__(self):
@@ -28,11 +28,11 @@ class vectorDB():
 db = vectorDB()
 
 en1 = "Prometheus stole fire from the gods and gave it to man."
-db._add(en1, db._embed(en1).cpu())
+embedding = db._embed(en1)
+db._add(en1, embedding.cpu())
 
 print(db.memory.get(include=['embeddings', 'documents']))
 
-# d = embedding.shape[1]
-# index = faiss.IndexFlatL2(d)
-# index.add(embedding.numpy())
+index = faiss.IndexFlatL2(embedding.shape[1])
+index.add(embedding.numpy())
 # print(index.reconstruct[1])
