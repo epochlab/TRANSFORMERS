@@ -1,5 +1,6 @@
 
-import torch, faiss, chromadb
+# import faiss
+import torch, chromadb
 from transformers import AutoTokenizer, AutoModel
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -33,6 +34,6 @@ db._add(en1, embedding.cpu())
 
 print(db.memory.get(include=['embeddings', 'documents']))
 
-index = faiss.IndexFlatL2(embedding.shape[1])
-index.add(embedding.numpy())
+# index = faiss.IndexFlatL2(embedding.shape[1])
+# index.add(embedding.numpy())
 # print(index.reconstruct[1])
