@@ -2,7 +2,8 @@
 
 # import faiss
 import torch, chromadb
-from transformers import AutoTokenizer, AutoModel
+import transformers
+from transformers import AutoTokenizer, AutoModel, pipeline
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(device)
@@ -27,13 +28,41 @@ class vectorDB():
             ids=[str(0)]
         )
 
-db = vectorDB()
+class Llama():
+    def __init__(self):
+        self.model = "/mnt/artemis/library/weights/meta/llama-2/7Bf/hf"
+        self.tokenizer = AutoTokenizer.from_pretrained(self.model)
 
-en1 = "Prometheus stole fire from the gods and gave it to man."
-embedding = db._embed(en1)
-db._add(en1, embedding.cpu())
+        self.pipeline = transformers.pipeline(
+            "text-generation",
+            model=self.model,
+            torch_dtype=torch.float16,
+            device_map="auto",
+        )
 
-print(db.memory.get(include=['embeddings', 'documents']))
+    def generate(self, prompt):
+        sequences = self.pipeline(
+            prompt,
+            do_sample=True,
+            top_k=10,
+            num_return_sequences=1,
+            eos_token_id=self.tokenizer.eos_token_id,
+            max_length=200,
+        )
+
+        for seq in sequences:
+            print(f"Result: {seq['generated_text']}")
+
+# db = vectorDB()
+
+LLM = Llama()
+LLM.generate('I liked "Fight Club" and "Jaws". Do you have any recommendations of other films I might like?\n')
+
+# en1 = "Prometheus stole fire from the gods and gave it to man."
+# embedding = db._embed(en1)
+# db._add(en1, embedding.cpu())
+
+# print(db.memory.get(include=['embeddings', 'documents']))
 
 # index = faiss.IndexFlatL2(embedding.shape[1])
 # index.add(embedding.numpy())
