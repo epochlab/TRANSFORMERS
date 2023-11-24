@@ -57,11 +57,11 @@ db = vectorDB()
 LLM = Llama()
 LLM.generate('I liked "Fight Club" and "Jaws". Do you have any recommendations of other films I might like?\n')
 
-en1 = "Prometheus stole fire from the gods and gave it to man."
-embedding = db._embed(en1)
-db._add(en1, embedding.cpu())
+# en1 = "Prometheus stole fire from the gods and gave it to man."
+# embedding = db._embed(en1)
+# db._add(en1, embedding.cpu())
 
-print(db.memory.get(include=['embeddings', 'documents']))
+# print(db.memory.get(include=['embeddings', 'documents']))
 
 # index = faiss.IndexFlatL2(embedding.shape[1])
 # index.add(embedding.numpy())
