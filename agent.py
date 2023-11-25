@@ -3,10 +3,12 @@
 # import faiss
 import torch, chromadb
 import transformers
-from transformers import AutoTokenizer, AutoModel, pipeline
+from transformers import AutoTokenizer, AutoModel
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print(device)
+print(f"Device: {str(device).upper()}")
+
+# torch.manual_seed(123)
 
 class vectorDB():
     def __init__(self):
@@ -15,18 +17,26 @@ class vectorDB():
         self.tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
         self.model = AutoModel.from_pretrained("bert-base-uncased").to(device)
 
+    def push(self, data):
+        uuid = str(self._length()).zfill(3)
+        embedding = db._embed(data).cpu()
+        self.memory.add(
+            embeddings=[embedding[0].tolist()],
+            documents=[data],
+            ids=[uuid]
+        )
+
+    def pull(self, field):
+        return self.memory.get(include=field)
+    
     def _embed(self, x):
             tokens = self.tokenizer(x, return_tensors="pt").to(device)
             with torch.no_grad():
                 embedding = self.model(**tokens).last_hidden_state # [batch_size, sequence_length, hidden_size]
             return embedding.mean(dim=1) # Aggregate across sequence
-
-    def _add(self, data, embedding):
-        self.memory.add(
-            embeddings=[embedding[0].tolist()],
-            documents=[data],
-            ids=[str(0)]
-        )
+    
+    def _length(self):
+        return self.memory.count()
 
 class Llama():
     def __init__(self):
@@ -49,20 +59,42 @@ class Llama():
             eos_token_id=self.tokenizer.eos_token_id,
             max_length=200,
         )
+        return sequences
 
-        for seq in sequences:
-            print(f"Result: {seq['generated_text']}")
+    def prune(self, seq):
+        if not seq:
+            raise ValueError("Error: Empty sequence generated.")
 
-db = vectorDB()
-LLM = Llama()
-LLM.generate('I liked "Fight Club" and "Jaws". Do you have any recommendations of other films I might like?\n')
+        text = seq[0]['generated_text'].replace('\n', ' ')
+        sentences = [sentence for sentence in text.split('. ') if sentence.strip()][1:]
 
-# en1 = "Prometheus stole fire from the gods and gave it to man."
-# embedding = db._embed(en1)
-# db._add(en1, embedding.cpu())
+        if sentences and not text.strip().endswith('.'):
+            sentences = sentences[:-1]
 
-# print(db.memory.get(include=['embeddings', 'documents']))
+        pruned_text = '. '.join(sentences)
+        if not pruned_text.endswith('.'):
+            pruned_text += '.'
 
-# index = faiss.IndexFlatL2(embedding.shape[1])
-# index.add(embedding.numpy())
-# print(index.reconstruct[1])
+        return pruned_text
+
+if __name__ == "__main__":
+    db = vectorDB()
+    LLM = Llama()
+
+    en1 = "Prometheus stole fire from the gods and gave it to man."  
+    db.push(en1)
+
+    seq = LLM.generate(en1)
+    en2 = LLM.prune(seq)
+    db.push(en2)
+
+    print(f"Prompt: {en1}")
+    print(f"Response: {en2}")
+    print(db.pull(['documents']))
+
+    # index = faiss.IndexFlatL2(embedding.shape[1])
+    # index.add(embedding.numpy())
+    # print(index.reconstruct[1])
+
+# Build agent class
+# Hide other Chroma fields (ID & Documents / Embeddings)
