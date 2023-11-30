@@ -41,3 +41,15 @@ class Llama():
             pruned_text += '.'
 
         return pruned_text
+    
+# def encode(self, prompt):
+#     return self.tokenizer.encode(prompt, return_tensors="pt")
+
+# def decode(self, logits):
+#     tok = torch.argmax(logits[:, -1, :]).item()
+#     return self.tokenizer.decode(tok)
+
+# def generate(self, model, x):
+#     with torch.no_grad():
+#         logits = model(x).logits
+#     return logits

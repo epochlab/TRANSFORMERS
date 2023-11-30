@@ -6,7 +6,6 @@ from transformers import AutoTokenizer, AutoModel
 class vectorDB():
     def __init__(self, device):
         self.device = device
-        print(self.device)
         self.client = chromadb.Client()
         self.memory = self.client.create_collection(name="vecdb")
         self.tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
