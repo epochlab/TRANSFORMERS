@@ -36,6 +36,7 @@ class HyperConfig:
     vocab_size = len(chars)
 
 config = HyperConfig()
+print(config.vocab_size)
 
 stoi = { ch:i for i,ch in enumerate(config.chars) }
 itos = { i:ch for i,ch in enumerate(config.chars) }
@@ -72,7 +73,6 @@ def estimate_loss():
 #CONSTRUCT MODEL
 model = Transformer(config.n_embd, config.n_head, config.n_layer, config.vocab_size, config.block_size).to(device)
 print(sum(p.numel() for p in model.parameters())/1e6, 'M parameters')
-
 
 #TRAIN
 optimizer = torch.optim.AdamW(model.parameters(), lr=config.learning_rate)

@@ -13,11 +13,15 @@ if __name__ == "__main__":
     # db = vectorDB(device)
     LLM = Llama()
 
-    en1 = "Prometheus stole fire from the gods and gave it to man."  
+    en1 = "Prometheus stole fire from the gods and gave it to man." 
     # db.push(en1)
 
     seq = LLM.generate(en1)
     print(seq[0]['generated_text'])
+
+
+    
+
     # en2 = LLM.prune(seq)
     # print(en2)
     # db.push(en2)

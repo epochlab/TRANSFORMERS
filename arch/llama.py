@@ -41,7 +41,7 @@ class Llama():
             pruned_text += '.'
 
         return pruned_text
-    
+
 # def encode(self, prompt):
 #     return self.tokenizer.encode(prompt, return_tensors="pt")
 
