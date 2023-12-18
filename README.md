@@ -1,8 +1,9 @@
 # SIGPRO
 
 ### To-Do
-- FAISS
+- Creation, Execution, Context & Prioritization
 - Finalise Agent x0.1
+- FAISS
 - Coder
 - Depth
 - OpenEXR
