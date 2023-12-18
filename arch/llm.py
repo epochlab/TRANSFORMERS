@@ -34,19 +34,3 @@ class Llama():
 
     def decode(self, tok):
         return self.tokenizer.batch_decode(tok, skip_special_tokens=False, clean_up_tokenization_spaces=True)[0]
-    
-    def prune(self, seq):
-        if not seq:
-            raise ValueError("Error: Empty sequence generated.")
-
-        text = seq[0]['generated_text'].replace('\n', ' ')
-        sentences = [sentence for sentence in text.split('. ') if sentence.strip()][1:]
-
-        if sentences and not text.strip().endswith('.'):
-            sentences = sentences[:-1]
-
-        pruned_text = '. '.join(sentences)
-        if not pruned_text.endswith('.'):
-            pruned_text += '.'
-
-        return pruned_text

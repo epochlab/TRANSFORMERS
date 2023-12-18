@@ -3,7 +3,7 @@
 import torch
 from arch.llm import Llama
 from arch.vectordb import vectorDB
-from arch.utils import chat_playback
+from arch.utils import prune
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Device: {str(DEVICE).upper()}")
@@ -16,7 +16,8 @@ if __name__ == "__main__":
     db = vectorDB(DEVICE)
     LLM = Llama(MODEL_DIR, DEVICE)
 
-    en1 = "Prometheus stole fire from the gods and gave it to man." 
+    en1 = "Prometheus stole fire from the gods and gave it to man."
+    print(en1)
     db.push(en1)
 
     tok = LLM.encode(en1)
@@ -24,10 +25,8 @@ if __name__ == "__main__":
     startpos = len(tok[0])
     response = LLM.decode(new_tok[:,startpos:-1])
 
-    seq = ' '.join(response.split())
-    print(seq)
-    # en2 = LLM.prune(seq)
-    # print(en2)
+    en2 = prune(response)
+    print(en2)
     # db.push(en2)
 
     # print(f"Prompt: {en1}")

@@ -13,6 +13,19 @@ def img2tensor(file):
     sample = np.array(Image.open(file).convert('RGB'))
     return torch.tensor(sample.transpose((2, 0, 1))).float()
 
+def prune(text):
+    soup = ' '.join(text.split())
+    sentences = [sentence for sentence in soup.split('. ') if sentence.strip()]
+
+    if sentences and not text.strip().endswith('.'):
+        sentences = sentences[:-1]
+
+    pruned_text = '. '.join(sentences)
+    if not pruned_text.endswith('.'):
+        pruned_text += '.'
+
+    return pruned_text
+
 def chat_playback(response):
     sample = ' '.join(response.split())
     print("Agent: ", end='', flush=True)
