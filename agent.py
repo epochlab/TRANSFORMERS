@@ -20,7 +20,7 @@ def main():
     db.push(en1)
 
     tok = LLM.encode(' '.join([profile['call'], en1]))
-    new_tok = LLM.generate(tok, max_length=128, temp=0.7)
+    new_tok = LLM.generate(tok, max_length=128, temp=1.0)
     startpos = len(tok[0])
     response = LLM.decode(new_tok[:,startpos:-1])
 
