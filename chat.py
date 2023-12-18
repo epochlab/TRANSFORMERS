@@ -12,19 +12,17 @@ MODEL_DIR = "/mnt/artemis/library/weights/mistral/OpenHermes-2-Mistral-7B"
 def main():
     llama = Llama(MODEL_DIR, DEVICE)
     
-    profile = load_config('profiles.yml')
-    agent = profile['jasmine']
-    print(agent['call'])
+    profile = load_config('profiles.yml')['jasmine']
+    print(profile['call'])
 
     print("Type 'exit()' to cancel.")
 
-    hist = []
     while True:
         x_inp = input("User: ")
         if x_inp == "exit()": break
 
-        tok = llama.encode(' '.join([agent['call'], x_inp]))
-        new_tok = llama.generate(tok, max_length=64, temp=0.7)
+        tok = llama.encode(' '.join([profile['call'], x_inp]))
+        new_tok = llama.generate(tok, max_length=128, temp=1.0)
 
         startpos = len(tok[0])
         response = llama.decode(new_tok[:,startpos:-1])

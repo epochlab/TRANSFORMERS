@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-import yaml, torch, time
+import yaml, time
+import torch 
 import numpy as np
 from PIL import Image
 
