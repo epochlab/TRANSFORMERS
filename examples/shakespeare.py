@@ -4,7 +4,7 @@ import sys
 sys.path.append('..')
 
 import torch
-from arch.transformer import Transformer
+from models.transformer import Transformer
 from dataclasses import dataclass
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

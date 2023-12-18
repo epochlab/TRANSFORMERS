@@ -3,3 +3,4 @@ transformers
 accelerate
 chromadb
 yaml
+pillow
