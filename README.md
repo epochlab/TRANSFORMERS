@@ -2,7 +2,7 @@
 
 ### To-Do
 - Creation, Execution, Context & Prioritization
-- Finalise Agent x0.1
+- Finalise Agent v0.1
 - FAISS
 - Coder
 - Depth
@@ -13,4 +13,3 @@
 - Calculator
 - Q*
 - Master of Experts (MOE)
-- OCIO

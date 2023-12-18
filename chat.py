@@ -24,7 +24,7 @@ def main():
         tok = LLM.encode(' '.join([profile['call'], x_inp]))
         new_tok = LLM.generate(tok, max_length=128, temp=1.0)
         startpos = len(tok[0])
-        response = LLM.decode(new_tok[:,startpos:-1])
+        response = LLM.decode(new_tok[:,len(tok[0]):-1])
 
         chat_playback(response)
 
