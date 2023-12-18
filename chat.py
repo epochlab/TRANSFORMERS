@@ -10,7 +10,7 @@ print(f"Device: {str(DEVICE).upper()}")
 MODEL_DIR = "/mnt/artemis/library/weights/mistral/OpenHermes-2-Mistral-7B"
 
 def main():
-    llama = Llama(MODEL_DIR, DEVICE)
+    LLM = Llama(MODEL_DIR, DEVICE)
     
     profile = load_config('profiles.yml')['jasmine']
     print(profile['call'])
@@ -21,11 +21,11 @@ def main():
         x_inp = input("User: ")
         if x_inp == "exit()": break
 
-        tok = llama.encode(' '.join([profile['call'], x_inp]))
-        new_tok = llama.generate(tok, max_length=128, temp=1.0)
+        tok = LLM.encode(' '.join([profile['call'], x_inp]))
+        new_tok = LLM.generate(tok, max_length=128, temp=1.0)
 
         startpos = len(tok[0])
-        response = llama.decode(new_tok[:,startpos:-1])
+        response = LLM.decode(new_tok[:,startpos:-1])
 
         chat_playback(response)
 
