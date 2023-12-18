@@ -1,31 +1,40 @@
 #!/usr/bin/env python3
 
 import torch
-from transformers import AutoTokenizer, pipeline
+from transformers import AutoTokenizer, AutoModelForCausalLM
+
+MODEL_DIR = "/mnt/artemis/library/weights/mistral/OpenHermes-2-Mistral-7B"
 
 class Llama():
-    def __init__(self):
-        self.model = "/mnt/artemis/library/weights/meta/llama-2/7Bf/hf"
-        self.tokenizer = AutoTokenizer.from_pretrained(self.model)
+    def __init__(self, model_dir, device):
+        self.model = AutoModelForCausalLM.from_pretrained(model_dir, 
+                                                          torch_dtype=torch.float16, 
+                                                          device_map="auto")
+        
+        self.tokenizer = AutoTokenizer.from_pretrained(model_dir, padding_side='left')
+        self.device = device
 
-        self.pipeline = pipeline(
-            "text-generation",
-            model=self.model,
-            torch_dtype=torch.float16,
-            device_map="auto",
-        )
+    def generate(self, tok, max_length, temp):
+        attn_mask = torch.tensor([1] * len(tok[0])).unsqueeze(0).to(self.device)
+        tok = self.model.generate(
+            input_ids = tok,
+            attention_mask = attn_mask,
+            max_new_tokens = max_length,
+            do_sample = True,
+            top_p = 1.0,
+            top_k = 10,
+            temperature = temp,
+            pad_token_id = self.tokenizer.pad_token_id,
+            repetition_penalty = 1.0,
+            length_penalty = 1.0)
+        return tok
 
-    def generate(self, prompt):
-        sequences = self.pipeline(
-            prompt,
-            do_sample=True,
-            top_k=10,
-            num_return_sequences=1,
-            eos_token_id=self.tokenizer.eos_token_id,
-            max_length=200,
-        )
-        return sequences
+    def encode(self, prompt):
+        return self.tokenizer(prompt, return_tensors="pt").to(self.device).input_ids
 
+    def decode(self, tok):
+        return self.tokenizer.batch_decode(tok, skip_special_tokens=False, clean_up_tokenization_spaces=True)[0]
+    
     def prune(self, seq):
         if not seq:
             raise ValueError("Error: Empty sequence generated.")
@@ -41,15 +50,3 @@ class Llama():
             pruned_text += '.'
 
         return pruned_text
-
-# def encode(self, prompt):
-#     return self.tokenizer.encode(prompt, return_tensors="pt")
-
-# def decode(self, logits):
-#     tok = torch.argmax(logits[:, -1, :]).item()
-#     return self.tokenizer.decode(tok)
-
-# def generate(self, model, x):
-#     with torch.no_grad():
-#         logits = model(x).logits
-#     return logits

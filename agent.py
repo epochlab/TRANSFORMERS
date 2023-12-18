@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import torch
-from arch.llm import Llama
+from SIGPRO.arch.llm import Llama
 from arch.vectordb import vectorDB
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
