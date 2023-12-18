@@ -1,4 +1,4 @@
-# SIGNAL
+# SIGPRO
 
 ### To-Do
 - Fix LLM Generate
