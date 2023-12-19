@@ -4,3 +4,4 @@ accelerate
 chromadb
 yaml
 pillow
+omegaconf
