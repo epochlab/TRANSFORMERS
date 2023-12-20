@@ -27,9 +27,8 @@ def prune(text):
     return pruned_text
 
 def chat_playback(response):
-    sample = ' '.join(response.split())
-    print("Agent: ", end='', flush=True)
-    for word in sample:
+    response = response.replace("\n\n", "")
+    for word in response:
         time.sleep(0.01)
         print(word, end='', flush=True)
     print()
