@@ -1,7 +1,8 @@
 # SIGPRO
 
 ### To-Do
-- BOS & EOS Tokens | User / Response Flags
+- Fix special tokens
+- Fast Tokensizer
 - Creation, Execution, Context & Prioritization
 - Finalise Agent v0.1
 - FAISS

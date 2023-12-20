@@ -30,5 +30,7 @@ def chat_playback(response):
     response = response.replace("\n\n", "")
     for word in response:
         time.sleep(0.01)
-        print(word, end='', flush=True)
+        col = '\033[96m'
+        reset = '\033[0m'
+        print(f"{col}{word}{reset}", end='', flush=True)
     print()
