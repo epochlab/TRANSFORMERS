@@ -11,6 +11,7 @@ def load_config(file):
     
 def img2tensor(file):
     sample = np.array(Image.open(file).convert('RGB'))
+    # To Do: Normalise
     return torch.tensor(sample.transpose((2, 0, 1))).float()
 
 def prune(text):
@@ -27,18 +28,11 @@ def prune(text):
     return pruned_text
 
 def chat_playback(response):
+    COL = '\033[96m'
+    RESET = '\033[0m'
+
     bucket = ' '.join(response.split())
     for word in bucket:
         time.sleep(0.01)
-        print(f"{Colors.CYAN}{word}{Colors.RESET}", end='', flush=True)
+        print(f"{COL}{word}{RESET}", end='', flush=True)
     print()
-
-class Colors:
-    RED = '\033[91m'
-    GREEN = '\033[92m'
-    YELLOW = '\033[93m'
-    BLUE = '\033[94m'
-    MAGENTA = '\033[95m'
-    CYAN = '\033[96m'
-    WHITE = '\033[97m'
-    RESET = '\033[0m' #Default

@@ -2,12 +2,17 @@
 
 ### To-Do
 - Fix special tokens
-- Creation, Execution, Context & Prioritization
-- Finalise Agent v0.1
-- FAISS
+- Timing & Feedback
+- Explore Attn Mask & Features
 - Coder
+- Creation, Execution, Context & Prioritization
+- FAISS
+- Finalise Agent v0.1
 - Transformer Config
 - Fine-Tuning (Ted)
+- Vision
+- Depth / SfM
+- Diffusion
 - Calculator
 - Q*
 - Master of Experts (MOE)
