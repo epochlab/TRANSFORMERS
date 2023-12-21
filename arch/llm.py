@@ -16,19 +16,25 @@ class Llama():
 
     def generate(self, tok, max_length, temp):
         attn_mask = torch.tensor([1] * len(tok[0])).unsqueeze(0).to(self.device)
-        new_tok = self.model.generate(
-            input_ids = tok,
-            attention_mask = attn_mask,
-            max_new_tokens = max_length,
-            do_sample = True,
-            top_p = 1.0,
-            top_k = 10,
-            temperature = temp,
-            pad_token_id = self.tokenizer.pad_token_id,
-            repetition_penalty = 1.0,
-            length_penalty = 1.0)
 
-        return torch.cat((new_tok[:,0].reshape(1,1), new_tok[:,len(tok[0]):]), dim=1)
+        tok_length: int = 0
+        while tok_length <= 2:
+            new_tok = self.model.generate(
+                input_ids = tok,
+                attention_mask = attn_mask,
+                max_new_tokens = max_length,
+                do_sample = True,
+                top_p = 1.0,
+                top_k = 10,
+                temperature = temp,
+                pad_token_id = self.tokenizer.pad_token_id,
+                repetition_penalty = 1.0,
+                length_penalty = 1.0)
+            
+            new_tok = torch.cat((new_tok[:,0].reshape(1,1), new_tok[:,len(tok[0]):]), dim=1)
+            tok_length = new_tok.shape[1]
+
+        return new_tok
 
     def encode(self, prompt):
         return self.tokenizer(prompt, return_tensors="pt").to(self.device).input_ids
