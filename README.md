@@ -2,7 +2,6 @@
 
 ### To-Do
 - Fix special tokens
-- Fast Tokensizer
 - Creation, Execution, Context & Prioritization
 - Finalise Agent v0.1
 - FAISS

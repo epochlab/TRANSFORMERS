@@ -27,10 +27,18 @@ def prune(text):
     return pruned_text
 
 def chat_playback(response):
-    response = response.replace("\n\n", "")
-    for word in response:
+    bucket = ' '.join(response.split())
+    for word in bucket:
         time.sleep(0.01)
-        col = '\033[96m'
-        reset = '\033[0m'
-        print(f"{col}{word}{reset}", end='', flush=True)
+        print(f"{Colors.CYAN}{word}{Colors.RESET}", end='', flush=True)
     print()
+
+class Colors:
+    RED = '\033[91m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    BLUE = '\033[94m'
+    MAGENTA = '\033[95m'
+    CYAN = '\033[96m'
+    WHITE = '\033[97m'
+    RESET = '\033[0m' #Default
