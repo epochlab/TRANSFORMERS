@@ -9,16 +9,19 @@
 ### To-Do
 - Fix special tokens
 - Clean force_quit
-- Web Search
+- Web Tool - Search, Scrape, Chunk and Extract > Summary Report
+- Context Agent
+- Security Agent
 - SentencePiece
 - Beam Search
-- Timing & Feedback (Processing...)
+- Timing & Feedback
+- Speed / Optimize
 - Explore Attn Mask & Features
-- Creation, Execution, Context & Prioritization
+- Task Manager & Agents 
 - FAISS
 - Finalise Agent v0.1
-- Speed
 - Transformer Config
+- Mamba & Conv2D
 - Fine-Tuning (Ted)
 - Vision
 - Depth / SfM
