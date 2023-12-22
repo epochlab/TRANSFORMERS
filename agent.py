@@ -3,7 +3,7 @@
 import torch
 from arch.llm import Llama
 from arch.vectordb import vectorDB
-from arch.utils import load_config, prune
+from arch.utils import load_config, albedo
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Device: {str(DEVICE).upper()}")
@@ -14,17 +14,23 @@ def main():
     db = vectorDB(DEVICE)
     LLM = Llama(MODEL_DIR, DEVICE)
 
-    profile = load_config('profiles.yml')['jasmine']
+    system = load_config('profiles.yml')['jasmine']
+    print(albedo(system['call'], 'green'))
 
-    en1 = "How fast does the earth spin?"
+    IM_START = LLM.tokenizer.bos_token
+    IM_END = LLM.tokenizer.eos_token
+
+    en1 = "How fast is a F16 jet?"
     db.push(en1)
 
-    tok = LLM.encode(' '.join([profile['call'], en1]))
-    new_tok = LLM.generate(tok, max_length=128, temp=1.0)
-    response = LLM.decode(new_tok[:,len(tok[0]):-1])
+    log = [IM_START] + [system['call']] + [IM_END] + [IM_START] + [en1] + [IM_END]
+    print(albedo(log, 'red')) # Print chat history
 
-    en2 = prune(response)
-    db.push(en2)
+    toks = LLM.encode(log)
+    new_tok = LLM.generate(toks, max_length=1024, temp=0.7)
+    response = LLM.decode(new_tok, skip_special=True)
+
+    db.push(response)
 
     print(db.pull(['documents']))
 

@@ -12,11 +12,12 @@ class vectorDB():
         self.model = AutoModel.from_pretrained("bert-base-uncased").to(self.device)
 
     def push(self, data):
+        prune= data.strip()
         uuid = str(self._length()).zfill(3)
-        embedding = self._embed(data).cpu()
+        embedding = self._embed(prune).cpu()
         self.memory.add(
             embeddings=[embedding[0].tolist()],
-            documents=[data],
+            documents=[prune],
             ids=[uuid]
         )
 
