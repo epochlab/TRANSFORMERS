@@ -14,16 +14,16 @@ def main():
     db = vectorDB(DEVICE)
     LLM = Llama(MODEL_DIR, DEVICE)
 
-    system = load_config('profiles.yml')['jasmine']
+    system = load_config('profiles.yml')['creation']
     print(albedo(system['call'], 'green'))
 
     IM_START = LLM.tokenizer.bos_token
     IM_END = LLM.tokenizer.eos_token
 
-    en1 = "How fast is a F16 jet?"
+    en1 = "How to bake a loaf of bread?"
     db.push(en1)
 
-    log = [IM_START] + [system['call']] + [IM_END] + [IM_START] + [en1] + [IM_END]
+    log = [IM_START] + [system['call']] + [IM_END] + [IM_START] + [en1] + [IM_END] # <- Script???
     print(albedo(log, 'red')) # Print chat history
 
     toks = LLM.encode(log)
@@ -31,7 +31,6 @@ def main():
     response = LLM.decode(new_tok, skip_special=True)
 
     db.push(response)
-
     print(db.pull(['documents']))
 
     # index = faiss.IndexFlatL2(embedding.shape[1])

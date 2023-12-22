@@ -9,6 +9,7 @@
 ### To-Do
 - Fix special tokens
 - Clean force_quit
+- Web Search
 - SentencePiece
 - Beam Search
 - Timing & Feedback (Processing...)
