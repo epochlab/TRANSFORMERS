@@ -22,7 +22,7 @@ def main():
         if x_inp == "exit()": break
 
         tok = LLM.encode(' '.join([profile['call'], x_inp]))
-        new_tok = LLM.generate(tok, max_length=1024, temp=1.0)
+        new_tok = LLM.generate(tok, max_length=1024, temp=0.7)
         response = LLM.decode(new_tok)
         
         chat_playback(response)

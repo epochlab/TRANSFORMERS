@@ -1,6 +1,7 @@
 # SIGPRO
 
 ### To-Do
+- Speed
 - Fix special tokens
 - Timing & Feedback
 - Explore Attn Mask & Features

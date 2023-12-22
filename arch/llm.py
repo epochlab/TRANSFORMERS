@@ -3,20 +3,18 @@
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
-MODEL_DIR = "/mnt/artemis/library/weights/mistral/OpenHermes-2-Mistral-7B"
-
 class Llama():
     def __init__(self, model_dir, device):
         self.model = AutoModelForCausalLM.from_pretrained(model_dir, 
                                                           torch_dtype=torch.float16, 
                                                           device_map="auto")
         
-        self.tokenizer = AutoTokenizer.from_pretrained(model_dir, padding_side='left')
+        self.tokenizer = AutoTokenizer.from_pretrained(model_dir)
         self.device = device
 
     def generate(self, tok, max_length, temp):
         attn_mask = torch.tensor([1] * len(tok[0])).unsqueeze(0).to(self.device)
-
+        
         tok_length: int = 0
         while tok_length <= 2:
             new_tok = self.model.generate(
@@ -24,12 +22,10 @@ class Llama():
                 attention_mask = attn_mask,
                 max_new_tokens = max_length,
                 do_sample = True,
-                top_p = 1.0,
-                top_k = 10,
+                top_p = 0.92,
+                top_k = 20,
                 temperature = temp,
-                pad_token_id = self.tokenizer.pad_token_id,
-                repetition_penalty = 1.0,
-                length_penalty = 1.0)
+                pad_token_id = self.tokenizer.pad_token_id,)
             
             new_tok = torch.cat((new_tok[:,0].reshape(1,1), new_tok[:,len(tok[0]):]), dim=1)
             tok_length = new_tok.shape[1]
