@@ -5,9 +5,8 @@
 - Chat Loop
 - SentencePiece
 - Beam Search
-- Timing & Feedback
+- Timing & Feedback (Processing...)
 - Explore Attn Mask & Features
-- Coder
 - Creation, Execution, Context & Prioritization
 - FAISS
 - Finalise Agent v0.1
