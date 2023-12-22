@@ -23,7 +23,6 @@ class Llama():
                 max_new_tokens = max_length,
                 do_sample = True,
                 top_p = 0.92,
-                top_k = 20,
                 temperature = temp,
                 pad_token_id = self.tokenizer.pad_token_id,)
             
