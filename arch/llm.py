@@ -31,8 +31,8 @@ class Llama():
 
         return new_tok
 
-    def encode(self, prompt):
-        return self.tokenizer(prompt, return_tensors="pt").to(self.device).input_ids
+    def encode(self, inp):
+        return self.tokenizer(' '.join(inp), return_tensors="pt").to(self.device).input_ids
 
-    def decode(self, tok):
-        return self.tokenizer.batch_decode(tok, skip_special_tokens=False, clean_up_tokenization_spaces=True)[0]
+    def decode(self, toks):
+        return self.tokenizer.batch_decode(toks, skip_special_tokens=False, clean_up_tokenization_spaces=True)[0]
