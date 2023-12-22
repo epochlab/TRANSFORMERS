@@ -2,7 +2,7 @@
 
 import torch
 from arch.llm import Llama
-from arch.utils import load_config, chat_playback, coder, colored
+from arch.utils import load_config, chat_playback, coder, albedo
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Device: {str(DEVICE).upper()}")
@@ -13,7 +13,7 @@ def main():
     LLM = Llama(MODEL_DIR, DEVICE)
     
     profile = load_config('profiles.yml')['quentin']
-    print(colored(profile['call'], 'green'))
+    print(albedo(profile['call'], 'green'))
 
     print("Type 'exit()' to cancel.")
 
