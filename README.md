@@ -10,7 +10,6 @@
 
 - Agent v0.1
 - Ngram
-- Clean force_quit
 - Special Token Wrapper
 - Worflow Diagram
 - Task Manager & Agents (Context & Security)
@@ -18,22 +17,22 @@
 - Agent v0.2
 - Timing & Feedback
 - Optimize Coder
+- Attention Mask
 - Visualise vectorDB - localhost:####
 - FAISS
-- Diffusion
-- Vision
-- Attn Mask & Features
+- Multimodal (Vision & Diffusion)
 - Beam Search
 - SentencePiece
+- Self-Update
+- Web Interface (Search, Scrape and Extract > Summary Report)
 
 - Agent more...
-- Self-Update
-- Web Tool (Search, Scrape and Extract > Summary Report)
 - Transformer Config
-- Mamba & Conv2D
+- Conv2D & Mamba Examples
 - Fine-Tuning (Ted)
 - Depth / SfM
 - Calculator
+- Email Management
 - Q*
 - Master of Experts (MOE)
 
