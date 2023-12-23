@@ -8,13 +8,13 @@
 
 ### To-Do:
 
-- Agent v0.1
+Agent v0.1
 - Ngram
 - Special Token Wrapper
 - Worflow Diagram
 - Task Manager & Agents (Context & Security)
 
-- Agent v0.2
+Agent v0.2
 - Timing & Feedback
 - Optimize Coder
 - Attention Mask
@@ -29,7 +29,7 @@ Agent v0.3
 - Web Tool (Search, Scrape and Extract > Summary Report)
 - Interface
 
-- Agent more...
+Agent more...
 - Transformer Config
 - Conv2D & Mamba Examples
 - Fine-Tuning (Ted)
