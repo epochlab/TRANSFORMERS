@@ -23,8 +23,11 @@
 - Multimodal (Vision & Diffusion)
 - Beam Search
 - SentencePiece
+
+Agent v0.3
 - Self-Update
-- Web Interface (Search, Scrape and Extract > Summary Report)
+- Web Tool (Search, Scrape and Extract > Summary Report)
+- Interface
 
 - Agent more...
 - Transformer Config
