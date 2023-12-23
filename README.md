@@ -6,26 +6,33 @@
 
 ## WORK-IN-PROGRESS
 
-### To-Do
-- Fix special tokens
+### To-Do:
+
+- Agent v0.1
+- Ngram
 - Clean force_quit
-- Web Tool - Search, Scrape, Chunk and Extract > Summary Report
-- Context Agent
-- Security Agent
-- SentencePiece
-- Beam Search
+- Special Token Wrapper
+- Worflow Diagram
+- Task Manager & Agents (Context & Security)
+
+- Agent v0.2
 - Timing & Feedback
-- Speed / Optimize
-- Explore Attn Mask & Features
-- Task Manager & Agents 
+- Optimize Coder
+- Visualise vectorDB - localhost:####
 - FAISS
-- Finalise Agent v0.1
+- Diffusion
+- Vision
+- Attn Mask & Features
+- Beam Search
+- SentencePiece
+
+- Agent more...
+- Self-Update
+- Web Tool (Search, Scrape and Extract > Summary Report)
 - Transformer Config
 - Mamba & Conv2D
 - Fine-Tuning (Ted)
-- Vision
 - Depth / SfM
-- Diffusion
 - Calculator
 - Q*
 - Master of Experts (MOE)
