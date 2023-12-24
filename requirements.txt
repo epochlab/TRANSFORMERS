@@ -1,7 +1,9 @@
+numpy
+pillow
 torch
 transformers
 accelerate
 chromadb
+sentencepiece
 yaml
-pillow
 omegaconf
