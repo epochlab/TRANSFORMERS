@@ -26,6 +26,7 @@
 - [Monte Carlo Tree Search](https://www.nature.com/articles/nature16961)
 - [MuZero](https://arxiv.org/pdf/1911.08265.pdf)
 - OpenCOG
+- TinyGrad
 - [BabyAGI](https://yoheinakajima.com/task-driven-autonomous-agent-utilizing-gpt-4-pinecone-and-langchain-for-diverse-applications/)
 - [Multi-modality](https://arxiv.org/pdf/2112.03763.pdf)
 - [Latent Diffusion](https://openaccess.thecvf.com/content/CVPR2022/papers/Rombach_High-Resolution_Image_Synthesis_With_Latent_Diffusion_Models_CVPR_2022_paper.pdf)
