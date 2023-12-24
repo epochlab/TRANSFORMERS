@@ -37,5 +37,5 @@ class Llama():
     def decode(self, toks, skip_special=False):
         return self.tokenizer.batch_decode(toks, skip_special_tokens=skip_special, clean_up_tokenization_spaces=True)[0]
     
-    def _token_wrapper(self, tok):
+    def token_wrapper(self, tok):
         return [self.tokenizer.bos_token, tok, self.tokenizer.eos_token]
