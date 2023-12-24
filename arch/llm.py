@@ -7,7 +7,7 @@ class Llama():
     def __init__(self, model_dir, device):
         self.model = AutoModelForCausalLM.from_pretrained(model_dir, 
                                                           torch_dtype=torch.float16, 
-                                                          device_map="auto")
+                                                          use_safetensors=True).to(device)
         
         self.tokenizer = AutoTokenizer.from_pretrained(model_dir)
         self.device = device
