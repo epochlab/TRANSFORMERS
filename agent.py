@@ -17,13 +17,14 @@ def main():
     system = load_config('profiles.yml')['creation']
     print(albedo(system['call'], 'green'))
 
+    # Replace with token_wrapper
     IM_START = LLM.tokenizer.bos_token
     IM_END = LLM.tokenizer.eos_token
 
-    en1 = "How to bake a loaf of bread?"
-    db.push(en1)
+    en = "How to bake a loaf of bread?"
+    db.push(en)
 
-    log = [IM_START] + [system['call']] + [IM_END] + [IM_START] + [en1] + [IM_END] # <- Script???
+    log = [IM_START] + [system['call']] + [IM_END] + [IM_START] + [en] + [IM_END] # <- Script???
     print(albedo(log, 'red')) # Print chat history
 
     toks = LLM.encode(log)

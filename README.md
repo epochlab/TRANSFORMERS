@@ -6,39 +6,6 @@
 
 ## WORK-IN-PROGRESS
 
-### To-Do:
-
-Agent v0.1
-- Ngram
-- Special Token Wrapper
-- Worflow Diagram
-- Task Manager & Agents (Context & Security)
-
-Agent v0.2
-- Timing & Feedback
-- Optimize Coder
-- Attention Mask
-- Visualise vectorDB - localhost:####
-- FAISS
-- Multimodal (Vision & Diffusion)
-- Beam Search
-- SentencePiece
-
-Agent v0.3
-- Self-Update
-- Web Tool (Search, Scrape and Extract > Summary Report)
-- Interface
-
-Agent more...
-- Transformer Config
-- Conv2D & Mamba Examples
-- Fine-Tuning (Ted)
-- Depth / SfM
-- Calculator
-- Email Management
-- Q*
-- Master of Experts (MOE)
-
 #### :books: Reading
 - [Integrate & Fire](https://en.wikipedia.org/wiki/Biological_neuron_model)
 - [Hodgkin Huxley](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1392413/pdf/jphysiol01442-0106.pdf)
