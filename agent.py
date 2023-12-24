@@ -1,18 +1,20 @@
 #!/usr/bin/env python3
 
-import torch
 from arch.llm import Llama
-from arch.vectordb import vectorDB
-from arch.utils import load_config, albedo
+from arch.vision import Vision
+from arch.vectordb import VectorDB
+from arch.utils import device_mapper, load_config, albedo, url2image
 
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+DEVICE = device_mapper()
 print(f"Device: {str(DEVICE).upper()}")
 
-MODEL_DIR = "/mnt/artemis/library/weights/mistral/OpenHermes-2-Mistral-7B"
+BLIP = "/Users/James/Documents/blip-image-captioning-large/"
+MISTRAL = "/mnt/artemis/library/weights/mistral/OpenHermes-2-Mistral-7B"
 
 def main():
     db = vectorDB(DEVICE)
-    LLM = Llama(MODEL_DIR, DEVICE)
+    LLM = Llama(MISTRAL, DEVICE)
+    v1 = Vision(BLIP, DEVICE)
 
     system = load_config('profiles.yml')['creation']
     print(albedo(system['call'], 'green'))
@@ -33,6 +35,10 @@ def main():
 
     db.push(response)
     print(db.pull(['documents']))
+
+    url = 'https://hips.hearstapps.com/hmg-prod/images/is-santa-claus-real-1632187377.jpg?'
+    raw_image = url2image(url)
+    print(v1.witness(raw_image))
 
     # index = faiss.IndexFlatL2(embedding.shape[1])
     # index.add(embedding.numpy())

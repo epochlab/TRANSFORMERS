@@ -3,7 +3,7 @@
 import torch, chromadb
 from transformers import AutoTokenizer, AutoModel
 
-class vectorDB():
+class VectorDB():
     def __init__(self, device):
         self.device = device
         self.client = chromadb.Client()
@@ -18,8 +18,7 @@ class vectorDB():
         self.memory.add(
             embeddings=[embedding[0].tolist()],
             documents=[prune],
-            ids=[uuid]
-        )
+            ids=[uuid])
 
     def pull(self, field):
         return self.memory.get(include=field)
