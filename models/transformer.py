@@ -4,6 +4,8 @@ import torch
 import torch.nn as nn
 from torch.nn import functional as F
 
+# "LLama2-7B": {"dim": 4096, "n_heads": 32, "n_layers": 32, "norm_eps": 1e-05, "vocab_size": 32000, "hidden_dim": 11008},
+
 class Head(nn.Module):
     """ one head of self-attention """
     def __init__(self, n_embd, head_size, block_size):
