@@ -7,6 +7,11 @@ from io import StringIO
 from contextlib import redirect_stdout
 from PIL import Image
 
+def device_mapper():
+    if torch.cuda.is_available(): return torch.device("cuda")
+    elif torch.backends.mps.is_available(): return torch.device("mps")
+    else: return torch.device("cpu")
+
 def load_config(file):
     with open(file) as f:
         return yaml.full_load(f)
