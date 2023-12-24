@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 
-import torch
 from arch.llm import Llama
-from arch.utils import load_config, albedo, chat_playback, coder
+from arch.utils import device_mapper, load_config, albedo, chat_playback, coder
 
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+DEVICE = device_mapper()
 print(f"Device: {str(DEVICE).upper()}")
 
 MODEL_DIR = "/mnt/artemis/library/weights/mistral/OpenHermes-2-Mistral-7B"
