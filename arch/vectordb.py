@@ -12,17 +12,24 @@ class VectorDB():
         self.model = AutoModel.from_pretrained("bert-base-uncased").to(self.device)
 
     def push(self, data):
-        prune= data.strip()
-        uuid = str(self._length()).zfill(3)
-        embedding = self._embed(prune).cpu()
-        self.memory.add(
-            embeddings=[embedding[0].tolist()],
-            documents=[prune],
-            ids=[uuid])
+        for sample in data:
+            prune = sample.strip()
+            uuid = str(self._length()).zfill(3)
+            embedding = self._embed(prune).cpu()
+            self.memory.add(
+                embeddings=[embedding[0].tolist()],
+                documents=[prune],
+                ids=[uuid])
 
-    def pull(self, field):
-        return self.memory.get(include=field)
+    def pull(self, uuid):
+        return self.memory.get(ids=[uuid.zfill(3)], include=['embeddings' ,'documents'])
     
+    def query():
+        return None
+    
+    def delete():
+        return None
+
     def _embed(self, x):
             tokens = self.tokenizer(x, return_tensors="pt").to(self.device)
             with torch.no_grad():

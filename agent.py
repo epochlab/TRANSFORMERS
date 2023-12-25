@@ -17,22 +17,27 @@ TOKENIZER_PATH = (MODEL_DIR if Path(MODEL_DIR).is_dir() else Path(MODEL_DIR).par
 
 def main():
     db = VectorDB(DEVICE)
+    print(f"Signature: {db.client.heartbeat()}")
+
     tokenizer = SentencePieceProcessor(model_file=str(TOKENIZER_PATH))
     print(f"Vocab Size: {tokenizer.vocab_size()}")
 
     # LLM = Llama(MODEL_DIR, tokenizer, DEVICE)
-    v1 = Vision(BLIP_PATH, DEVICE)
+    V1 = Vision(BLIP_PATH, DEVICE)
 
-    en = "Prometheus stole fire from the gods and gave it to man."
-    db.push(en)
+    en1 = "Prometheus stole fire from the gods and gave it to man."
+    en2 = "Test ABC123"
+    db.push([en1, en2])
 
-    # Replace with token_wrapper
-    IM_START = tokenizer.bos_id()
-    IM_END = tokenizer.eos_id()
+    lookup = db.pull(str(000))['documents']
+    print(lookup)
 
-    log = [IM_START] + tokenizer.encode(en) + [IM_END]
-    print(albedo(log, 'red')) # Print chat history
-    print(albedo(tokenizer.decode(log), "green"))
+    # IM_START = tokenizer.bos_id()
+    # IM_END = tokenizer.eos_id()
+
+    # log = [IM_START] + tokenizer.encode(en) + [IM_END]
+    # print(albedo(log, 'red')) # Print chat history
+    # print(albedo(tokenizer.decode(log), "green"))
 
     # toks = LLM.encode(log)
     # new_tok = LLM.generate(toks, max_length=1024, temp=0.7)
@@ -40,10 +45,7 @@ def main():
 
     url = 'https://images.newscientist.com/wp-content/uploads/2017/02/08190042/gettyimages-615305114.jpg'
     raw_image = url2image(url)
-    response = v1.witness(raw_image)
-
-    db.push(response)
-    print(db.pull(['documents']))
+    response = V1.witness(raw_image)
 
     # index = faiss.IndexFlatL2(embedding.shape[1])
     # index.add(embedding.numpy())
