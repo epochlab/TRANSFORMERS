@@ -10,24 +10,26 @@ class VectorDB():
         self.memory = self.client.create_collection(name="vecdb")
         self.tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
         self.model = AutoModel.from_pretrained("bert-base-uncased").to(self.device)
+        self.padding: int = 3
 
     def push(self, data):
         for sample in data:
             prune = sample.strip()
-            uuid = str(self._length()).zfill(3)
+            uuid = str(self._length()).zfill(self.padding)
             embedding = self._embed(prune).cpu()
             self.memory.add(
                 embeddings=[embedding[0].tolist()],
                 documents=[prune],
                 ids=[uuid])
 
-    def pull(self, uuid):
-        return self.memory.get(ids=[uuid.zfill(3)], include=['embeddings' ,'documents'])
+    def pull(self, uuid=None):
+        if uuid != None: return self.memory.get(ids=[uuid.zfill(self.padding)], include=['embeddings' ,'documents'])
+        else: return self.memory.get(include=['embeddings' ,'documents'])
+    
+    def delete(self, uuid):
+        return self.memory.delete(ids=[uuid.zfill(self.padding)])
     
     def query():
-        return None
-    
-    def delete():
         return None
 
     def _embed(self, x):

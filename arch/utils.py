@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import yaml, time, requests
+import yaml, time, requests, random, string
 import torch
 import numpy as np
 from io import StringIO
@@ -27,6 +27,10 @@ def image2tensor(file):
     sample = np.array(Image.open(file).convert('RGB'))
     # To Do: Normalise
     return torch.tensor(sample.transpose((2, 0, 1))).float()
+
+def alphanumeric(length):
+    chars = string.ascii_letters + string.digits
+    return ''.join((random.choice(chars) for i in range(length)))
 
 def albedo(text, clr='white'):
     color_index = ['black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white'].index(clr.lower())
