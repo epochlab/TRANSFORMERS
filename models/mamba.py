@@ -1,3 +1,12 @@
+from __future__ import annotations
+import math
+import json
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from dataclasses import dataclass
+from einops import rearrange, repeat, einsum
+
 """Simple, minimal implementation of Mamba in one file of PyTorch.
 
 Suggest reading the following before/while reading the code:
@@ -19,15 +28,6 @@ Glossary:
     dt_rank: rank of Δ                  (See [1] Section 3.6 "Parameterization of ∆")
 
 """
-from __future__ import annotations
-import math
-import json
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-from dataclasses import dataclass
-from einops import rearrange, repeat, einsum
-
 
 @dataclass
 class ModelArgs:

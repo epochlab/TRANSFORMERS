@@ -28,9 +28,6 @@ class VectorDB():
     
     def delete(self, uuid):
         return self.memory.delete(ids=[uuid.zfill(self.padding)])
-    
-    def query():
-        return None
 
     def _embed(self, x):
             tokens = self.tokenizer(x, return_tensors="pt").to(self.device)
