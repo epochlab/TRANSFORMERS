@@ -1,13 +1,9 @@
 #!/usr/bin/env python3
 
-from pathlib import Path
-from sentencepiece import SentencePieceProcessor
-
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
 MODEL_PATH = "/mnt/artemis/library/weights/mistral/OpenHermes-2-Mistral-7B"
-TOKENIZER_PATH = (MODEL_PATH if Path(MODEL_PATH).is_dir() else Path(MODEL_PATH).parent) + "/tokenizer.model"
 
 class Llama():
     def __init__(self, device):
@@ -29,7 +25,8 @@ class Llama():
                 temperature = temp,
                 pad_token_id = self.tokenizer.pad_token_id,)
             
-            new_tok = torch.cat((new_tok[:,0].reshape(1,1), new_tok[:,len(tok[0]):]), dim=1)
+            # new_tok = torch.cat((new_tok[:,0].reshape(1,1), new_tok[:,len(tok[0]):]), dim=1)
+            new_tok = new_tok[:,len(tok[0]):]
             tok_length = new_tok.shape[1]
 
         return new_tok

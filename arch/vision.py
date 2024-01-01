@@ -2,10 +2,12 @@
 
 from transformers import BlipProcessor, BlipForConditionalGeneration
 
-class Vision():
-    def __init__(self, model_dir, device):
-        self.processor = BlipProcessor.from_pretrained(model_dir)
-        self.model = BlipForConditionalGeneration.from_pretrained(model_dir).to(device)
+MODEL_PATH = "/mnt/artemis/library/weights/blip/blip-image-captioning-large"
+
+class Blip():
+    def __init__(self, device):
+        self.processor = BlipProcessor.from_pretrained(MODEL_PATH)
+        self.model = BlipForConditionalGeneration.from_pretrained(MODEL_PATH).to(device)
         self.device = device
 
     def witness(self, img, max_length=128):

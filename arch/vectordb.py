@@ -27,7 +27,7 @@ class VectorDB():
         else: return self.memory.get(include=['embeddings' ,'documents'])
     
     def delete(self, uuid):
-        return self.memory.delete(ids=[uuid.zfill(self.padding)])
+        return self.memory.delete(ids=[str(uuid).zfill(self.padding)])
 
     def _embed(self, x):
             tokens = self.tokenizer(x, return_tensors="pt").to(self.device)
