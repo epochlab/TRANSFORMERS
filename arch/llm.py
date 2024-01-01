@@ -1,16 +1,19 @@
 #!/usr/bin/env python3
 
+from pathlib import Path
+from sentencepiece import SentencePieceProcessor
+
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
+MODEL_PATH = "/mnt/artemis/library/weights/mistral/OpenHermes-2-Mistral-7B"
+TOKENIZER_PATH = (MODEL_PATH if Path(MODEL_PATH).is_dir() else Path(MODEL_PATH).parent) + "/tokenizer.model"
+
 class Llama():
-    def __init__(self, model_dir, device):
-        self.model = AutoModelForCausalLM.from_pretrained(model_dir, 
-                                                          torch_dtype=torch.float16, 
-                                                          use_safetensors=True).to(device)
-        
-        self.tokenizer = AutoTokenizer.from_pretrained(model_dir)
+    def __init__(self, device):
         self.device = device
+        self.model = AutoModelForCausalLM.from_pretrained(MODEL_PATH, torch_dtype=torch.float16, device_map=self.device)
+        self.tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
 
     def generate(self, tok, max_length, temp):
         attn_mask = torch.tensor([1] * len(tok[0])).unsqueeze(0).to(self.device)

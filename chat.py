@@ -6,10 +6,8 @@ from arch.utils import device_mapper, load_config, albedo, chat_playback, coder
 DEVICE = device_mapper()
 print(f"Device: {str(DEVICE).upper()}")
 
-MODEL_DIR = "/mnt/artemis/library/weights/mistral/OpenHermes-2-Mistral-7B"
-
 def main():
-    LLM = Llama(MODEL_DIR, DEVICE)
+    LLM = Llama(DEVICE)
     
     system = load_config('profiles.yml')['jasmine']
     print(albedo(system['call'], 'green'))
