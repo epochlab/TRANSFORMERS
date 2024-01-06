@@ -25,10 +25,9 @@ class Llama():
                 temperature = temp,
                 pad_token_id = self.tokenizer.pad_token_id,)
             
-            # new_tok = torch.cat((new_tok[:,0].reshape(1,1), new_tok[:,len(tok[0]):]), dim=1)
-            new_tok = new_tok[:,len(tok[0]):]
+            new_tok = torch.cat((new_tok[:,0].reshape(1,1), new_tok[:,len(tok[0]):]), dim=1)
             tok_length = new_tok.shape[1]
-
+            
         return new_tok
 
     def encode(self, inp):

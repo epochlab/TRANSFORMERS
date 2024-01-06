@@ -34,5 +34,10 @@ def main():
         chat_playback(response)
         coder(response)
 
+        # url = 'https://images.newscientist.com/wp-content/uploads/2017/02/08190042/gettyimages-615305114.jpg'
+        # raw_image = url2image(url)
+        # response = V1.witness(raw_image)
+        # print(response)
+
 if __name__ == "__main__":
     main()
