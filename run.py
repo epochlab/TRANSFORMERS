@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from arch.llama.llm import Llama
-from arch.utils import device_mapper
+from arch.utils import device_mapper, load_config
 
 from typing import List, Literal, TypedDict
 
@@ -17,17 +17,13 @@ class Message(TypedDict):
 
 Dialog = List[Message]
 B_INST, E_INST = "[INST]", "[/INST]"
-B_SYS, E_SYS = "<<SYS>>\n", "\n<</SYS>>\n\n"
+B_SYS, E_SYS = "<<SYS>>", "<</SYS>>"
 
 def main():
     LLM = Llama.build(ckpt_dir=MODEL_PATH, tokenizer_path=TOKENIZER_PATH, max_seq_len=512, max_batch_size=8, device=DEVICE)
 
-    dialogs: List[Dialog] = [
-            [
-            {"role": "system", "content": "You are 'Quentin', a superintelligent artificial intelligence support agent, your purpose is to assist the user with any request they have, returning short and precise answers in less than 100 words. You ONLY answer the question asked."},
-            {"role": "user", "content": "How fast is an F16?"}
-            ]
-        ]
+    dialogs: List[Dialog] = [[{"role": "system", "content": load_config('profiles.yml')['jasmine']}, 
+                              {"role": "user", "content": "How fast is an F16?"}]]
 
     toks = []
     for dialog in dialogs:
@@ -49,7 +45,7 @@ def main():
     for dialog, result in zip(dialogs, results):
         for msg in dialog:
             print(f"{msg['role'].capitalize()}: {msg['content']}")
-        print(f"> {result['generation']['content']}")
+        print(f">{result['generation']['content']}")
 
 if __name__ == "__main__":
     main()
