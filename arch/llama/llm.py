@@ -4,28 +4,12 @@ from arch.llama.model import ModelArgs, Transformer
 
 import json, time, os
 from pathlib import Path
-from typing import List, Literal, Optional, Tuple, TypedDict
+from typing import List, Optional, Tuple
 
 import torch
 import torch.nn.functional as F
 
 from sentencepiece import SentencePieceProcessor
-
-Role = Literal["system", "user", "assistant"]
-
-class Message(TypedDict):
-    role: Role
-    content: str
-
-class ChatPrediction(TypedDict, total=False):
-    generation: Message
-    tokens: List[str]  # not required
-    logprobs: List[float]  # not required
-
-Dialog = List[Message]
-
-B_INST, E_INST = "[INST]", "[/INST]"
-B_SYS, E_SYS = "<<SYS>>\n", "\n<</SYS>>\n\n"
 
 class Tokenizer:
     def __init__(self, model_path: str):
