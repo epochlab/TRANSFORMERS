@@ -32,7 +32,9 @@ def main():
         response = [LLM.tokenizer.decode(t) for t in new_toks]
         
         # if logprobs:
-        #   response = [{"generation": {"role": "assistant", "content": LLM.tokenizer.decode(t)}, "tokens": [LLM.tokenizer.decode(x) for x in t], "logprobs": logprobs_i,} for t, logprobs_i in zip(new_toks, logprobs)]
+        #     response = [{"generation": {"role": "assistant", "content": LLM.tokenizer.decode(t)}, "tokens": [LLM.tokenizer.decode(x) for x in t], "logprobs": logprobs_i,} for t, logprobs_i in zip(new_toks, logprobs)]
+        # else:
+        #     response = [LLM.tokenizer.decode(t) for t in new_toks]
 
         log += response
         print(albedo(log, 'red'))
