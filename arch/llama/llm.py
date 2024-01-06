@@ -70,7 +70,7 @@ class Llama:
         max_seq_len: int,
         max_batch_size: int,
         seed: int = 1,
-    ) -> "LlamaX":
+    ) -> "Llama":
         
         torch.set_default_device(DEVICE)
         torch.set_default_dtype(torch.float16)
