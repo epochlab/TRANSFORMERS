@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from model import ModelArgs, Transformer
+from arch.llama.model import ModelArgs, Transformer
 
 import json, time, os
 from pathlib import Path
@@ -104,6 +104,9 @@ class Llama:
         bsz = len(prompt_tokens)
         assert bsz <= params.max_batch_size, (bsz, params.max_batch_size)
 
+        if max_gen_len is None:
+            max_gen_len = self.model.params.max_seq_len - 1
+
         min_prompt_len = min(len(t) for t in prompt_tokens)
         max_prompt_len = max(len(t) for t in prompt_tokens)
         assert max_prompt_len <= params.max_seq_len
@@ -132,7 +135,6 @@ class Llama:
                 next_token = torch.argmax(logits[:, -1], dim=-1)
 
             next_token = next_token.reshape(-1)
-            # only replace token if prompt has already been generated
             next_token = torch.where(input_text_mask[:, cur_pos], tokens[:, cur_pos], next_token)
             tokens[:, cur_pos] = next_token
             if logprobs:
@@ -164,52 +166,6 @@ class Llama:
             out_tokens.append(toks)
             out_logprobs.append(probs)
         return (out_tokens, out_logprobs if logprobs else None)
-
-
-
-
-    def chat_completion(self, dialogs: List[Dialog], temp: float = 0.6, top_p: float = 0.9, max_gen_len: Optional[int] = None, logprobs: bool = False) -> List[ChatPrediction]:
-
-        if max_gen_len is None:
-            max_gen_len = self.model.params.max_seq_len - 1
-
-        prompt_toks = []
-        for dialog in dialogs:
-            if dialog[0]["role"] == "system":
-                dialog = [{"role": dialog[1]["role"], "content": B_SYS + dialog[0]["content"] + E_SYS + dialog[1]["content"]}] + dialog[2:]
-
-            dialog_toks: List[int] = sum([
-                    self.tokenizer.encode(
-                        f"{B_INST} {(prompt['content']).strip()} {E_INST} {(answer['content']).strip()} ",
-                        bos=True,
-                        eos=True,
-                    )
-                    for prompt, answer in zip(dialog[::2], dialog[1::2],)
-                ],
-                [],
-            )
-
-            dialog_toks += self.tokenizer.encode(f"{B_INST} {(dialog[-1]['content']).strip()} {E_INST}", bos=True, eos=False)
-            prompt_toks.append(dialog_toks)
-
-        generation_toks, generation_logprobs = self.generate(prompt_tokens=prompt_toks, max_gen_len=max_gen_len, temperature=temp, top_p=top_p, logprobs=logprobs)
-
-        if logprobs:
-            return [
-                {
-                    "generation": {"role": "assistant", "content": self.tokenizer.decode(t)},
-                    "tokens": [self.tokenizer.decode(x) for x in t],
-                    "logprobs": logprobs_i,
-                }
-                for t, logprobs_i in zip(generation_toks, generation_logprobs)
-            ]
-        else:
-            return [
-                {
-                    "generation": {"role": "assistant", "content": self.tokenizer.decode(t)}
-                }
-                for t in generation_toks
-            ]
 
 def sample_top_p(probs, p):
     probs_sort, probs_idx = torch.sort(probs, dim=-1, descending=True)
