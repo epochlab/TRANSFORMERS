@@ -64,7 +64,7 @@ class Llama:
 
         model = Transformer(model_args)
         model.load_state_dict(checkpoint, strict=False)
-        print(f"Loaded in {time.time() - start_time:.2f} seconds")
+        print(f"Loaded in {time.time() - start_time:.2f} seconds\n")
 
         return Llama(model, tokenizer, device)
 
