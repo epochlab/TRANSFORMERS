@@ -37,15 +37,8 @@ def main():
         #     response = [LLM.tokenizer.decode(t) for t in new_toks]
 
         log += response
-        print(albedo(log, 'red'))
-
         chat_playback(response[0])
-        # coder(response[0])
-
-        # url = 'https://images.newscientist.com/wp-content/uploads/2017/02/08190042/gettyimages-615305114.jpg'
-        # raw_image = url2image(url)
-        # response = V1.witness(raw_image)
-        # print(response)
+        print(albedo(log, 'red')) # Chat history
 
 if __name__ == "__main__":
     main()
