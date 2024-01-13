@@ -1,6 +1,7 @@
+#!/usr/bin/env python3
+
 import torch
 from typing import Tuple
-
 
 def precompute_freqs_cis(dim: int, end: int, theta: float) -> torch.Tensor:
     freqs = 1.0 / (theta ** (torch.arange(0, dim, 2)[: (dim // 2)].float() / dim))

@@ -40,7 +40,7 @@ def chat_playback(response):
     for word in bucket:
         time.sleep(0.01)
         print(albedo(f"{word}", "cyan"), end='', flush=True)
-    print()
+    print("\n")
 
 def coder(response):
     # USER WARNING: Consider AI safety before execution.
