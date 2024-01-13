@@ -9,6 +9,7 @@ DEVICE = device_mapper()
 print(f"Device: {str(DEVICE).upper()}")
 
 MODEL_PATH = "/mnt/artemis/library/weights/meta/llama-2/7Bf"
+# MODEL_PATH = "/mnt/artemis/library/weights/meta/llama-2/7Bf"
 TOKENIZER_PATH = "/mnt/artemis/library/weights/meta/llama-2/tokenizer.model"
 
 class Message(TypedDict):
