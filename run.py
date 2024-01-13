@@ -39,8 +39,9 @@ def main():
         if dialog[0]["role"] == "system":
             dialog = [{"role": dialog[1]["role"], "content": B_SYS + dialog[0]["content"] + E_SYS + dialog[1]["content"]}] + dialog[2:]
 
-        dialog_toks: List[int] = sum([LLM.tokenizer.encode(f"{B_INST} {(prompt['content']).strip()} {E_INST} {(answer['content']).strip()}", bos=True, eos=True,) for prompt, answer in zip(dialog[::2], dialog[1::2],)],[],)
-        dialog_toks += LLM.tokenizer.encode(f"{B_INST} {(dialog[-1]['content']).strip()} {E_INST}", bos=True, eos=False)
+        dialog_toks: List[int] = sum([LLM.tokenizer.encode(f"{B_INST} {(prompt['content']).strip()} {E_INST} {(answer['content']).strip()}") for prompt, answer in zip(dialog[::2], dialog[1::2],)],[],)
+        dialog_toks += LLM.tokenizer.encode(f"{B_INST} {(dialog[-1]['content']).strip()} {E_INST}")
+
         toks = [dialog_toks[-256:]]
 
         with Timing("Total: ", enabled=False, on_exit=lambda x: f", {1e9/x:.2f} tok/sec"):

@@ -1,28 +1,37 @@
-import os
+#!/usr/bin/env python3
 
+from pathlib import Path
 from sentencepiece import SentencePieceProcessor
 from typing import List
 
 class Tokenizer:
     def __init__(self, model_path: str):
-        assert os.path.isfile(model_path), model_path
-        self.sp_model = SentencePieceProcessor(model_file=model_path)
+        assert Path(model_path).exists(), model_path
+        self._model = SentencePieceProcessor(model_file=model_path)
+        assert self._model.vocab_size() == self._model.get_piece_size()
 
-        self.n_words: int = self.sp_model.vocab_size()
-        self.bos_id: int = self.sp_model.bos_id()
-        self.eos_id: int = self.sp_model.eos_id()
-        self.pad_id: int = self.sp_model.pad_id()
+    @property
+    def n_words(self) -> int:
+        return self._model.vocab_size()
 
-        assert self.sp_model.vocab_size() == self.sp_model.get_piece_size()
+    @property
+    def bos_id(self) -> int:
+        return self._model.bos_id()
 
-    def encode(self, s: str, bos: bool, eos: bool) -> List[int]:
-        assert type(s) is str
-        t = self.sp_model.encode(s)
+    @property
+    def eos_id(self) -> int:
+        return self._model.eos_id()
+
+    @property
+    def pad_id(self) -> int:
+        return self._model.pad_id()
+
+    def encode(self, s: str, bos: bool = True) -> List[int]:
+        assert isinstance(s, str)
+        t = self._model.encode(s)
         if bos:
-            t = [self.bos_id] + t
-        if eos:
-            t = t + [self.eos_id]
+            t = [self.bos_id, *t]
         return t
 
     def decode(self, t: List[int]) -> str:
-        return self.sp_model.decode(t)
+        return self._model.decode(t)

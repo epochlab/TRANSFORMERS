@@ -2,7 +2,7 @@
 
 from arch.llama.model import ModelArgs, Transformer
 
-import json, time #, os
+import json, time
 from pathlib import Path
 from typing import List, Optional, Tuple
 
@@ -40,6 +40,10 @@ class Llama:
 
         model = Transformer(model_args)
         model.load_state_dict(checkpoint, strict=False)
+
+        parameters = model.parameters()
+        print("Nparams:", sum(p.nelement() for p in parameters))
+        # print(model.eval())
         print(f"Loaded in {time.time() - start_time:.2f} seconds\n")
 
         return Llama(model, tokenizer, device)
