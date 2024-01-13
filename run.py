@@ -26,7 +26,7 @@ def main():
     system_call = load_config('profiles.yml')['jasmine']
     log: List[Dialog] = [[{"role": "system", "content": system_call}]]
 
-    print("Type 'exit()' or press Ctrl+C to cancel.")
+    print("Use 'exit()' or press Ctrl-D to exit.")
     print(f"{albedo(system_call, 'green')}")
     print("\n==================================\n") 
 

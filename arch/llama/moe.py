@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import dataclasses
 from typing import List
 
@@ -6,12 +8,10 @@ import torch.nn.functional as F
 from simple_parsing.helpers import Serializable
 from torch import nn
 
-
 @dataclasses.dataclass
 class MoeArgs(Serializable):
     num_experts: int
     num_experts_per_tok: int
-
 
 class MoeLayer(nn.Module):
     def __init__(self, experts: List[nn.Module], gate: nn.Module, moe_args: MoeArgs):
