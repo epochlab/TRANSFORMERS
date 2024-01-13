@@ -9,9 +9,9 @@ import torch
 from torch import nn
 from simple_parsing.helpers import Serializable
 
-from mistral.rope import precompute_freqs_cis, apply_rotary_emb
-from mistral.cache import CacheView, RotatingBufferCache
-from mistral.moe import MoeArgs, MoeLayer
+from arch.mistral.rope import precompute_freqs_cis, apply_rotary_emb
+from arch.mistral.cache import CacheView, RotatingBufferCache
+from arch.mistral.moe import MoeArgs, MoeLayer
 
 from xformers.ops.fmha import memory_efficient_attention
 

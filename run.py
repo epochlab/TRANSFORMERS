@@ -41,20 +41,19 @@ def main():
 
         dialog_toks: List[int] = sum([LLM.tokenizer.encode(f"{B_INST} {(prompt['content']).strip()} {E_INST} {(answer['content']).strip()}", bos=True, eos=True,) for prompt, answer in zip(dialog[::2], dialog[1::2],)],[],)
         dialog_toks += LLM.tokenizer.encode(f"{B_INST} {(dialog[-1]['content']).strip()} {E_INST}", bos=True, eos=False)
-        toks = [dialog_toks[-256:]] # TO DO: Repeat add sys_call
+        toks = [dialog_toks[-256:]]
 
         with Timing("Total: ", enabled=False, on_exit=lambda x: f", {1e9/x:.2f} tok/sec"):
             logprobs = False
-            new_toks, tok_logprobs = LLM.generate(prompt_tokens=toks, max_gen_len=None, temperature=0.6, top_p=0.9, logprobs=logprobs)
+            new_toks, tok_logprobs = LLM.generate(prompt_tokens=toks, max_gen_len=1024, temperature=0.6, top_p=0.9, logprobs=logprobs)
 
-        # Fix logprobs
         if logprobs:
-            result = [{"generation": {"role": "assistant", "content": LLM.tokenizer.decode(t)}, "tokens": [LLM.tokenizer.decode(x) for x in t], "logprobs": logprobs_i,} for t, logprobs_i in zip(new_toks[0], tok_logprobs)]
+            result = [{"generation": {"role": "assistant", "content": LLM.tokenizer.decode(t)}, "tokens": [LLM.tokenizer.decode(x) for x in t], "logprobs": logprobs_i,} for t, logprobs_i in zip(new_toks[0], tok_logprobs)] ### Fix
         else:
             result = {"generation": {"role": "assistant", "content": LLM.tokenizer.decode(new_toks[0])}}
 
         log[-1].append(result['generation'])
-        # print(albedo(dialog, "red")) # Print chat history
+        # print(albedo(log, "red")) # Print chat history
 
         chat_playback(f"> {result['generation']['content']}")
         coder(result['generation']['content'])
