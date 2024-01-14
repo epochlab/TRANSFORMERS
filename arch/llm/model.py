@@ -8,7 +8,7 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 
-from arch.llama.rope import precompute_freqs_cis, apply_rotary_emb
+from arch.llm.rope import precompute_freqs_cis, apply_rotary_emb
 
 @dataclass
 class ModelArgs:
