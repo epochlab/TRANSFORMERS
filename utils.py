@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
 
-import yaml, time, requests
+import yaml, time
 from io import StringIO
 from contextlib import redirect_stdout
 
 import torch
-import numpy as np
-from PIL import Image
 
 def device_mapper():
     if torch.cuda.is_available(): return torch.device("cuda")
@@ -16,18 +14,6 @@ def device_mapper():
 def load_config(file: str):
     with open(file) as f:
         return yaml.full_load(f)
-
-def url2image(url: str):
-    response = requests.get(url, stream=True)
-    if response.status_code == 200:
-        return Image.open(response.raw).convert('RGB')
-    else:
-        print(f"Error: URL returned status code {response.status_code}")
-
-def image2tensor(file: str):
-    sample = np.array(Image.open(file).convert('RGB'))
-    # To Do: Normalise
-    return torch.tensor(sample.transpose((2, 0, 1))).float()
 
 def albedo(text, clr='white'):
     color_index = ['black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white'].index(clr.lower())
