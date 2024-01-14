@@ -27,14 +27,7 @@ def sample(logits: torch.Tensor, temperature: float, top_p: float):
     return next_token.reshape(-1)
 
 @torch.inference_mode()
-def generate(
-    prompt_tokens: List[List[int]],
-    max_gen_len: int,
-    temperature: float = 0.6,
-    top_p: float = 0.9,
-    logprobs: bool = False,
-    echo: bool = False,
-) -> Tuple[List[List[int]], Optional[List[List[float]]]]:
+def generate(prompt_tokens: List[List[int]], max_gen_len: int, temperature: float = 0.6, top_p: float = 0.9, logprobs: bool = False, echo: bool = False,) -> Tuple[List[List[int]], Optional[List[List[float]]]]:
 
     params = model.params
     bsz = len(prompt_tokens)
@@ -118,7 +111,7 @@ TOKENIZER_PATH = "/mnt/artemis/library/weights/meta/llama-2/tokenizer.model"
 
 torch.set_default_device(DEVICE)
 torch.set_default_dtype(torch.float16)
-torch.manual_seed(1)
+# torch.manual_seed(1)
 
 with Timing("Loading in "):
     with open(Path(MODEL_PATH) / "params.json", "r") as f:
