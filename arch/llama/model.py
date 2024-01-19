@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 
-import math
+import json, math
+from pathlib import Path
 from dataclasses import dataclass
 from typing import Optional, Tuple
 
 import torch
 from torch import nn
 import torch.nn.functional as F
+
+from arch.tokenizer import Tokenizer
 
 @dataclass
 class ModelArgs:
@@ -162,6 +165,7 @@ class Transformer(nn.Module):
         self.params = params
         self.vocab_size = params.vocab_size
         self.n_layers = params.n_layers
+        self.device = None
 
         self.tok_embeddings = nn.Embedding(params.vocab_size, params.dim)
         self.layers = torch.nn.ModuleList()
@@ -197,3 +201,24 @@ class Transformer(nn.Module):
         h = self.norm(h)
         output = self.output(h).float()
         return output
+    
+    def from_folder(model_path: Path, 
+                    max_batch_size=8, 
+                    device="cuda", 
+                    dtype=torch.float16
+                    ) -> "Transformer":
+
+            with open(Path(model_path) / "params.json", "r") as f:
+                params = json.loads(f.read())
+
+            tokenizer = Tokenizer(model_path=str(model_path.parent / "tokenizer.model"))
+
+            args: ModelArgs = ModelArgs(max_seq_len=512, max_batch_size=max_batch_size, **params)
+            args.vocab_size = tokenizer.n_words
+            print(args)
+
+            model = Transformer(args)
+            model.device = device
+            ckpt = torch.load(Path(model_path) / "consolidated.00.pth", map_location="cpu")
+            model.load_state_dict(ckpt, strict=False)
+            return model.to(device=model.device, dtype=dtype)
