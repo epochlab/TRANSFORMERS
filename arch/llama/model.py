@@ -202,6 +202,7 @@ class Transformer(nn.Module):
         output = self.output(h).float()
         return output
     
+    @staticmethod
     def from_folder(model_path: Path, 
                     max_batch_size=8, 
                     device="cuda", 

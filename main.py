@@ -2,6 +2,8 @@
 
 from pathlib import Path
 
+import torch
+
 from arch.tokenizer import Tokenizer
 from arch.llama.model import Transformer
 from arch.llama.run import generate
@@ -10,6 +12,10 @@ from helper import Timing
 
 DEVICE = device_mapper()
 print(f"Device: {str(DEVICE).upper()}")
+
+torch.set_default_device(DEVICE)
+torch.set_default_dtype(torch.float16)
+# torch.manual_seed(123)
 
 MODEL_PATH = Path("/mnt/artemis/library/weights/meta/llama-2/7Bf")
 
