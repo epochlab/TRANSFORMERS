@@ -8,7 +8,7 @@ import torch
 import torch.nn.functional as F
 
 from arch.tokenizer import Tokenizer
-from arch.model import ModelArgs, Transformer
+from arch.llama.model import ModelArgs, Transformer
 from utils import device_mapper, load_config, albedo, chat_playback
 from helper import Timing
 
@@ -58,7 +58,6 @@ def sample(logits: torch.Tensor, temperature: float, top_p: float):
 
 @torch.inference_mode()
 def generate(prompt_tokens: List[List[int]], max_gen_len: int, temperature: float = 0.6, top_p: float = 0.9, logprobs: bool = False, echo: bool = False,) -> Tuple[List[List[int]], Optional[List[List[float]]]]:
-
     params = transformer.params
     bsz = len(prompt_tokens)
     assert bsz <= params.max_batch_size, (bsz, params.max_batch_size)
