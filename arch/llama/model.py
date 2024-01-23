@@ -9,8 +9,6 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 
-from arch.tokenizer import Tokenizer
-
 @dataclass
 class ModelArgs:
     dim: int = 4096
@@ -21,8 +19,9 @@ class ModelArgs:
     multiple_of: int = 256  # make SwiGLU hidden layer size multiple of large power of 2
     ffn_dim_multiplier: Optional[float] = None
     norm_eps: float = 1e-5
-    max_batch_size: int = 32
     max_seq_len: int = 2048
+
+    max_batch_size: int = 32
 
 def repeat_kv(x: torch.Tensor, n_rep: int) -> torch.Tensor:
     bs, slen, n_kv_heads, head_dim = x.shape
@@ -52,20 +51,6 @@ def apply_rotary_emb(xq: torch.Tensor, xk: torch.Tensor, freqs_cis: torch.Tensor
     return xq_out.type_as(xq), xk_out.type_as(xk)
 
 
-class RMSNorm(torch.nn.Module):
-    def __init__(self, dim: int, eps: float = 1e-6):
-        super().__init__()
-        self.eps = eps
-        self.weight = nn.Parameter(torch.ones(dim))
-
-    def _norm(self, x):
-        return x * torch.rsqrt(x.pow(2).mean(-1, keepdim=True) + self.eps)
-
-    def forward(self, x):
-        output = self._norm(x.float()).type_as(x)
-        return output * self.weight
-
-
 class Attention(nn.Module):
     """Multi-head attention module."""
     def __init__(self, args: ModelArgs):
@@ -73,7 +58,9 @@ class Attention(nn.Module):
         self.n_kv_heads = args.n_heads if args.n_kv_heads is None else args.n_kv_heads
         self.n_local_heads = args.n_heads
         self.n_local_kv_heads = self.n_kv_heads
+
         self.n_rep = self.n_local_heads // self.n_local_kv_heads
+
         self.head_dim = args.dim // args.n_heads
 
         self.wq = nn.Linear(args.dim, args.n_heads * self.head_dim, bias=False)
@@ -86,12 +73,11 @@ class Attention(nn.Module):
 
     def forward(self, x: torch.Tensor, start_pos: int, freqs_cis: torch.Tensor, mask: Optional[torch.Tensor]):
         bsz, seqlen, _ = x.shape
-        xq, xk, xv = self.wq(x), self.wk(x), self.wv(x)
 
+        xq, xk, xv = self.wq(x), self.wk(x), self.wv(x)
         xq = xq.view(bsz, seqlen, self.n_local_heads, self.head_dim)
         xk = xk.view(bsz, seqlen, self.n_local_kv_heads, self.head_dim)
         xv = xv.view(bsz, seqlen, self.n_local_kv_heads, self.head_dim)
-
         xq, xk = apply_rotary_emb(xq, xk, freqs_cis=freqs_cis)
 
         self.cache_k = self.cache_k.to(xq)
@@ -136,6 +122,20 @@ class FeedForward(nn.Module):
         return self.w2(F.silu(self.w1(x)) * self.w3(x))
 
 
+class RMSNorm(torch.nn.Module):
+    def __init__(self, dim: int, eps: float = 1e-6):
+        super().__init__()
+        self.eps = eps
+        self.weight = nn.Parameter(torch.ones(dim))
+
+    def _norm(self, x):
+        return x * torch.rsqrt(x.pow(2).mean(-1, keepdim=True) + self.eps)
+
+    def forward(self, x):
+        output = self._norm(x.float()).type_as(x)
+        return output * self.weight
+
+
 class TransformerBlock(nn.Module):
     def __init__(self, layer_id: int, args: ModelArgs):
         super().__init__()
@@ -143,12 +143,7 @@ class TransformerBlock(nn.Module):
         self.dim = args.dim
         self.head_dim = args.dim // args.n_heads
         self.attention = Attention(args)
-        self.feed_forward = FeedForward(
-            dim=args.dim,
-            hidden_dim=4 * args.dim,
-            multiple_of=args.multiple_of,
-            ffn_dim_multiplier=args.ffn_dim_multiplier,
-        )
+        self.feed_forward = FeedForward(dim=args.dim, hidden_dim=4 * args.dim, multiple_of=args.multiple_of, ffn_dim_multiplier=args.ffn_dim_multiplier)
         self.layer_id = layer_id
         self.attention_norm = RMSNorm(args.dim, eps=args.norm_eps)
         self.ffn_norm = RMSNorm(args.dim, eps=args.norm_eps)
@@ -204,22 +199,19 @@ class Transformer(nn.Module):
     
     @staticmethod
     def from_folder(model_path: Path, 
-                    max_batch_size=8, 
+                    max_batch_size: int,
                     device="cuda", 
                     dtype=torch.float16
                     ) -> "Transformer":
 
-            with open(Path(model_path) / "params.json", "r") as f:
+            with open(model_path / "params.json", "r") as f:
                 params = json.loads(f.read())
 
-            tokenizer = Tokenizer(model_path=str(model_path.parent / "tokenizer.model"))
+            model_args = ModelArgs(max_seq_len=512, max_batch_size=max_batch_size, **params)
+            model_args.vocab_size = 32000
+            print(model_args)
 
-            args: ModelArgs = ModelArgs(max_seq_len=512, max_batch_size=max_batch_size, **params)
-            args.vocab_size = tokenizer.n_words
-            print(args)
-
-            model = Transformer(args)
-            model.device = device
-            ckpt = torch.load(Path(model_path) / "consolidated.00.pth", map_location="cpu")
+            model = Transformer(model_args)
+            ckpt = torch.load(str(model_path / "consolidated.00.pth"), mmap=True)
             model.load_state_dict(ckpt, strict=False)
-            return model.to(device=model.device, dtype=dtype)
+            return model.to(device=device, dtype=dtype)

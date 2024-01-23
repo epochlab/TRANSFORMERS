@@ -7,6 +7,7 @@ import torch
 from arch.tokenizer import Tokenizer
 from arch.llama.model import Transformer
 from arch.llama.run import generate
+
 from utils import device_mapper, load_config, albedo, chat_playback
 from helper import Timing
 
@@ -21,7 +22,7 @@ MODEL_PATH = Path("/mnt/artemis/library/weights/meta/llama-2/7Bf")
 
 with Timing("Loading in "):
     tokenizer = Tokenizer(model_path=str(MODEL_PATH.parent / "tokenizer.model"))
-    transformer = Transformer.from_folder(model_path=MODEL_PATH, max_batch_size=8, device=DEVICE)
+    transformer = Transformer.from_folder(MODEL_PATH, max_batch_size=8, device=DEVICE)
 print(f"Nparams: {sum(p.nelement() for p in transformer.parameters()):,}")
 
 def main():

@@ -5,9 +5,6 @@ from typing import List, Optional, Tuple
 import torch
 import torch.nn.functional as F
 
-from arch.tokenizer import Tokenizer
-from arch.llama.model import Transformer
-
 def sample_top_p(probs: torch.Tensor, p: float):
     assert 0 <= p <= 1
     probs_sort, probs_idx = torch.sort(probs, dim=-1, descending=True)
@@ -29,8 +26,8 @@ def sample(logits: torch.Tensor, temperature: float, top_p: float):
 
 @torch.inference_mode()
 def generate(prompt_tokens: List[List[int]],
-             model: Transformer, 
-             tokenizer: Tokenizer, *, 
+             model: None, 
+             tokenizer: None, *, 
              max_gen_len: int, 
              temperature: float = 0.6, 
              top_p: float = 0.9, 
