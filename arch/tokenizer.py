@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 from pathlib import Path
-from sentencepiece import SentencePieceProcessor
 from typing import List
+from sentencepiece import SentencePieceProcessor
 
 class Tokenizer:
     def __init__(self, model_path: str):

@@ -18,10 +18,10 @@ torch.set_default_device(DEVICE)
 torch.set_default_dtype(torch.float16)
 # torch.manual_seed(123)
 
-MODEL_PATH = Path("/mnt/artemis/library/weights/meta/llama-2/7Bf")
+MODEL_PATH = Path("/mnt/artemis/library/weights/meta/llama-2/7B-chat")
 
 with Timing("Loading in "):
-    tokenizer = Tokenizer(model_path=str(MODEL_PATH.parent / "tokenizer.model"))
+    tokenizer = Tokenizer(model_path=str(MODEL_PATH / "tokenizer.model"))
     transformer = Transformer.from_folder(MODEL_PATH, max_batch_size=8, device=DEVICE)
 print(f"Nparams: {sum(p.nelement() for p in transformer.parameters()):,}")
 
