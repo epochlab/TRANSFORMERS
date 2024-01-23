@@ -26,7 +26,7 @@ with Timing("Loading in "):
 print(f"Nparams: {sum(p.nelement() for p in transformer.parameters()):,}")
 
 def main():
-    system_call = load_config('profiles.yml')['jasmine']
+    system_call = load_config('profiles.yml')['diana']
 
     print("Use 'exit()' or press Ctrl-D to exit.")
     print("\nSystem Call:")

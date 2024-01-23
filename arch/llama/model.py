@@ -20,7 +20,6 @@ class ModelArgs:
     ffn_dim_multiplier: Optional[float] = None
     norm_eps: float = 1e-5
     max_seq_len: int = 2048
-
     max_batch_size: int = 32
 
 def repeat_kv(x: torch.Tensor, n_rep: int) -> torch.Tensor:
