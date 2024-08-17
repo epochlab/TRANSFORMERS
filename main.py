@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
+import warnings
+warnings.filterwarnings('ignore')
+
 from pathlib import Path
-
 import torch
-
 from arch.tokenizer import Tokenizer
 from arch.model import Transformer
 from arch.run import generate
@@ -21,7 +22,7 @@ MODEL_PATH = Path("/mnt/artemis/library/weights/meta/llama-2/7B-chat")
 
 with Timing("Loading in "):
     tokenizer = Tokenizer(model_path=str(MODEL_PATH / "tokenizer.model"))
-    transformer = Transformer.from_folder(MODEL_PATH, max_batch_size=8, device=DEVICE)
+    transformer = Transformer.from_folder(MODEL_PATH, max_batch_size=8, device=DEVICE, tokenizer=tokenizer)
 
 print(f"Nparams: {sum(p.nelement() for p in transformer.parameters()):,}")
 
@@ -34,7 +35,7 @@ def main():
     print("\n==================================\n")
 
     B_INST, E_INST = "[INST]", "[/INST]"
-    B_SYS, E_SYS = "<<SYS>>", "<</SYS>>"    
+    B_SYS, E_SYS = "<<SYS>>", "<</SYS>>"
 
     log = [B_SYS + system_call + E_SYS]
 

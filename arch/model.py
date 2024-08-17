@@ -19,14 +19,22 @@ class ModelArgs:
     multiple_of: int = 256  # make SwiGLU hidden layer size multiple of large power of 2
     ffn_dim_multiplier: Optional[float] = None
     norm_eps: float = 1e-5
+    rope_theta: float = 500000
     max_seq_len: int = 2048
     max_batch_size: int = 32
 
-def repeat_kv(x: torch.Tensor, n_rep: int) -> torch.Tensor:
-    bs, slen, n_kv_heads, head_dim = x.shape
-    if n_rep == 1:
-        return x
-    return (x[:, :, :, None, :].expand(bs, slen, n_kv_heads, n_rep, head_dim).reshape(bs, slen, n_kv_heads * n_rep, head_dim))
+class RMSNorm(torch.nn.Module):
+    def __init__(self, dim: int, eps: float = 1e-6):
+        super().__init__()
+        self.eps = eps
+        self.weight = nn.Parameter(torch.ones(dim))
+
+    def _norm(self, x):
+        return x * torch.rsqrt(x.pow(2).mean(-1, keepdim=True) + self.eps)
+
+    def forward(self, x):
+        output = self._norm(x.float()).type_as(x)
+        return output * self.weight
 
 def precompute_freqs_cis(dim: int, end: int, theta: float = 10000.0):
     freqs = 1.0 / (theta ** (torch.arange(0, dim, 2)[: (dim // 2)].float() / dim))
@@ -49,6 +57,11 @@ def apply_rotary_emb(xq: torch.Tensor, xk: torch.Tensor, freqs_cis: torch.Tensor
     xk_out = torch.view_as_real(xk_ * freqs_cis).flatten(3)
     return xq_out.type_as(xq), xk_out.type_as(xk)
 
+def repeat_kv(x: torch.Tensor, n_rep: int) -> torch.Tensor:
+    bs, slen, n_kv_heads, head_dim = x.shape
+    if n_rep == 1:
+        return x
+    return (x[:, :, :, None, :].expand(bs, slen, n_kv_heads, n_rep, head_dim).reshape(bs, slen, n_kv_heads * n_rep, head_dim))
 
 class Attention(nn.Module):
     """Multi-head attention module."""
@@ -120,21 +133,6 @@ class FeedForward(nn.Module):
     def forward(self, x):
         return self.w2(F.silu(self.w1(x)) * self.w3(x))
 
-
-class RMSNorm(torch.nn.Module):
-    def __init__(self, dim: int, eps: float = 1e-6):
-        super().__init__()
-        self.eps = eps
-        self.weight = nn.Parameter(torch.ones(dim))
-
-    def _norm(self, x):
-        return x * torch.rsqrt(x.pow(2).mean(-1, keepdim=True) + self.eps)
-
-    def forward(self, x):
-        output = self._norm(x.float()).type_as(x)
-        return output * self.weight
-
-
 class TransformerBlock(nn.Module):
     def __init__(self, layer_id: int, args: ModelArgs):
         super().__init__()
@@ -151,7 +149,6 @@ class TransformerBlock(nn.Module):
         h = x + self.attention.forward(self.attention_norm(x), start_pos, freqs_cis, mask)
         out = h + self.feed_forward.forward(self.ffn_norm(h))
         return out
-
 
 class Transformer(nn.Module):
     def __init__(self, params: ModelArgs):
@@ -170,7 +167,7 @@ class Transformer(nn.Module):
 
         # Note that self.params.max_seq_len is multiplied by 2 because the token limit for the Llama 2 generation of models is 4096. 
         # Adding this multiplier instead of using 4096 directly allows for dynamism of token lengths while training or fine-tuning.
-        self.freqs_cis = precompute_freqs_cis(self.params.dim // self.params.n_heads, self.params.max_seq_len * 2)
+        self.freqs_cis = precompute_freqs_cis(self.params.dim // self.params.n_heads, self.params.max_seq_len * 2, params.rope_theta)
 
     @torch.inference_mode()
     def forward(self, tokens: torch.Tensor, start_pos: int):
@@ -197,18 +194,16 @@ class Transformer(nn.Module):
         return output
     
     @staticmethod
-    def from_folder(model_path: Path, 
-                    max_batch_size: int,
-                    device="cuda", 
-                    dtype=torch.float16
-                    ) -> "Transformer":
-
+    def from_folder(model_path: Path, max_batch_size: int, device="cuda", dtype=torch.float16, tokenizer=None) -> "Transformer":
             with open(model_path / "params.json", "r") as f:
                 params = json.loads(f.read())
 
             model_args = ModelArgs(max_seq_len=512, max_batch_size=max_batch_size, **params)
-            model_args.vocab_size = 32000
+            model_args.vocab_size = tokenizer.n_words
             print(model_args)
+
+            if torch.cuda.is_bf16_supported(): torch.set_default_tensor_type(torch.cuda.BFloat16Tensor)
+            else:torch.set_default_tensor_type(torch.cuda.HalfTensor)
 
             model = Transformer(model_args)
             ckpt = torch.load(str(model_path / "consolidated.00.pth"), mmap=True)
