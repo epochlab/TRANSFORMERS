@@ -63,7 +63,7 @@ def main():
         log += [res]
 
         chat_playback(f"> {res}")
-        # print(albedo(log, "red")) # Print chat history
+        print(albedo(log, "red")) # Print chat history
 
 if __name__ == "__main__":
     main()
