@@ -24,6 +24,8 @@ with Timing("Loading in "):
     tokenizer = Tokenizer(model_path=str(MODEL_PATH / "tokenizer.model"))
     transformer = Transformer.from_folder(MODEL_PATH, device=DEVICE, tokenizer=tokenizer)
 
+print(transformer.params.max_seq_len)
+
 print(f"Nparams: {sum(p.nelement() for p in transformer.parameters()):,}")
 
 def main():
@@ -37,7 +39,12 @@ def main():
     B_INST, E_INST = "[INST]", "[/INST]"
     B_SYS, E_SYS = "<<SYS>>", "<</SYS>>"
 
-    log = [B_SYS + system_call + E_SYS]
+    init_call = [B_SYS + system_call + E_SYS]
+    init_toks = tokenizer.encode(' '.join(init_call), bos=True)
+    log = init_call
+
+    max_len = transformer.params.max_seq_len
+    trunc_len = max_len - 256
 
     while True:
         prompt = input("User: ")
@@ -46,13 +53,18 @@ def main():
         log += [B_INST + prompt + E_INST]
 
         toks = tokenizer.encode(' '.join(log), bos=True)
+        
+        if len(toks) + trunc_len > max_len:
+            toks = init_toks + toks[-trunc_len:]
+
+        print(f"Sequence Length: {len(toks)}")
         new_toks, _ = generate(prompt_tokens=[toks], model=transformer, tokenizer=tokenizer, max_gen_len=None, temperature=0.7, top_p=0.9, logprobs=False)
         res = tokenizer.decode(new_toks[0]).strip()
         
         log += [res]
 
         chat_playback(f"> {res}")
-        # print(albedo(log, "red")) # Print chat history
+        print(albedo(log, "red")) # Print chat history
 
 if __name__ == "__main__":
     main()

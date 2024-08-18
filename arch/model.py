@@ -198,7 +198,7 @@ class Transformer(nn.Module):
             with open(model_path / "params.json", "r") as f:
                 params = json.loads(f.read())
 
-            model_args = ModelArgs(max_seq_len=512, max_batch_size=8, **params)
+            model_args = ModelArgs(max_seq_len=1024, max_batch_size=4, **params)
             model_args.vocab_size = tokenizer.n_words
             print(model_args)
 
