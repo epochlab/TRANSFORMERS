@@ -22,7 +22,7 @@ MODEL_PATH = Path("/mnt/artemis/library/weights/meta/llama-2/7B-chat")
 
 with Timing("Loading in "):
     tokenizer = Tokenizer(model_path=str(MODEL_PATH / "tokenizer.model"))
-    transformer = Transformer.from_folder(MODEL_PATH, max_batch_size=8, device=DEVICE, tokenizer=tokenizer)
+    transformer = Transformer.from_folder(MODEL_PATH, device=DEVICE, tokenizer=tokenizer)
 
 print(f"Nparams: {sum(p.nelement() for p in transformer.parameters()):,}")
 
@@ -48,7 +48,7 @@ def main():
         toks = tokenizer.encode(' '.join(log), bos=True)
         new_toks, _ = generate(prompt_tokens=[toks], model=transformer, tokenizer=tokenizer, max_gen_len=None, temperature=0.7, top_p=0.9, logprobs=False)
         res = tokenizer.decode(new_toks[0]).strip()
-
+        
         log += [res]
 
         chat_playback(f"> {res}")

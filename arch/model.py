@@ -194,11 +194,11 @@ class Transformer(nn.Module):
         return output
     
     @staticmethod
-    def from_folder(model_path: Path, max_batch_size: int, device="cuda", dtype=torch.float16, tokenizer=None) -> "Transformer":
+    def from_folder(model_path: Path, device="cuda", dtype=torch.float16, tokenizer=None) -> "Transformer":
             with open(model_path / "params.json", "r") as f:
                 params = json.loads(f.read())
 
-            model_args = ModelArgs(max_seq_len=512, max_batch_size=max_batch_size, **params)
+            model_args = ModelArgs(max_seq_len=512, max_batch_size=8, **params)
             model_args.vocab_size = tokenizer.n_words
             print(model_args)
 
