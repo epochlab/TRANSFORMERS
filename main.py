@@ -57,7 +57,6 @@ def main():
         if len(toks) + trunc_len >= max_len:
             toks = init_toks + toks[-trunc_len:]
 
-        print(f"seq_len: {len(toks)}")
         new_toks, _ = generate(prompt_tokens=[toks], model=transformer, tokenizer=tokenizer, max_gen_len=None, temperature=0.7, top_p=0.9, logprobs=False)
         res = tokenizer.decode(new_toks[0]).strip()
         
