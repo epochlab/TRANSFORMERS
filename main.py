@@ -8,7 +8,7 @@ import torch
 from arch.tokenizer import Tokenizer
 from arch.model import Transformer
 from arch.run import generate
-from utils import device_mapper, load_config, albedo, chat_playback
+from utils import device_mapper, load_config, albedo, chat_playback, coder
 from helper import Timing
 
 DEVICE = device_mapper()
@@ -59,11 +59,11 @@ def main():
 
         new_toks, _ = generate(prompt_tokens=[toks], model=transformer, tokenizer=tokenizer, max_gen_len=None, temperature=0.7, top_p=0.9, logprobs=False)
         res = tokenizer.decode(new_toks[0]).strip()
-        
         log += [res]
+        # print(albedo(log, "red"))
 
         chat_playback(f"> {res}")
-        print(albedo(log, "red")) # Print chat history
+        # coder(res)
 
 if __name__ == "__main__":
     main()
