@@ -3,4 +3,4 @@ pillow
 torch
 chromadb
 sentencepiece
-yaml
+pyyaml
